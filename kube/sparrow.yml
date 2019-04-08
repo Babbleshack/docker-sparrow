@@ -1,0 +1,41 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sparrow-scheduler
+  namespace: sparrow
+  labels:
+    app: sparrow
+    sparrow: master
+spec:
+  serviceName: sparrow-service
+  replicas: 1 
+  selector:
+    matchLabels:
+      sparrow: master
+  template: #pod template .spec.template
+    metadata:
+      namespace: sparrow
+      labels:
+        app: sparrow
+        sparrow: master
+    spec:
+      hostname: sparrow-master-0
+      nodeSelector:
+        sparrow: master
+      containers:
+        - name: sparrow-master
+          image: babbleshack/sparrow:base
+          imagePullPolicy: Always
+          command: [ "/bin/bash" ]
+          args: [ "/opt/init_container.d/start_sparrow_backend.sh" ]
+
+          ports:
+            - name: sprw-nm
+              containerPort: 20501
+            - name: sprw-int
+              containerPort: 20502
+            - name: sprw-sched
+              containerPort: 20503
+            - name: sprw-tasks-s
+              containerPort: 20507

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sparrow-config
+  namespace: sparrow
+data:
+  sparrow.conf: |
+    deployment.mode = configbased
+    static.node_monitors = sparrow-worker-0.sparrow-service:20502,sparrow-worker-1.sparrow-service:20502,sparrow-worker-2.sparrow-service:20502,sparrow-worker-3.sparrow-service:20502,sparrow-worker-4.sparrow-service:20502
+    static.app.name = sleepApp
