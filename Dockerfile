@@ -1,18 +1,17 @@
 FROM ubuntu:trusty
 #Built using trust for java7
 
+ENV SPARROW_CONF=/sparrow/etc
+ENV SPARROW_SBIN=/sparrow/sbin
+ENV SPARROW_HOME=/sparrow/sparrow-master
+
 ENV JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
 
 WORKDIR /sparrow
 
 RUN apt update \
-        && apt install -y -f wget gnupg unzip openjdk-7-jdk libjansi-java maven \
-        && apt install -y -f openssh-server openssh-client apt-transport-https
-
-# Fix the EC parameters error: (ref https://github.com/travis-ci/travis-ci/issues/8503)
-RUN wget "https://bouncycastle.org/download/bcprov-ext-jdk15on-158.jar" -O "${JAVA_HOME}"/jre/lib/ext/bcprov-ext-jdk15on-158.jar && \
-	perl -pi.bak -e 's/^(security\.provider\.)([0-9]+)/$1.($2+1)/ge' /etc/java-7-openjdk/security/java.security && \
-	echo "security.provider.1=org.bouncycastle.jce.provider.BouncyCastleProvider" | tee -a /etc/java-7-openjdk/security/java.security
+        && apt install -y -f wget unzip openjdk-7-jdk libjansi-java maven \
+        && apt install -y -f openssh-server openssh-client
 
 #Set up ssh keys
 RUN rm -rf /etc/ssh/ssh_host_dsa_key && ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key 
@@ -24,10 +23,16 @@ RUN wget https://github.com/radlab/sparrow/archive/master.zip \
         && unzip master.zip \
         && rm -rf master.zip 
 
-COPY files/sparrow/etc/sparrow.conf /sparrow/sparrow-master/
+COPY files/sparrow/etc/sparrow.conf $SPARROW_HOME/
+COPy files/sparrow/etc/* $SPARROW_CONF/
 COPY ./files/ssh/ssh_config /etc/ssh/
-COPY ./files/spark/etc/* /sparrow/spark-sparrow/project/
+# Add init scripts
+COPY ./files/sparrow/sbin/* $SPARROW_SBIN/
 
-WORKDIR /sparrow/sparrow-master 
-RUN mvn compile \
+RUN ln -s $SPARROW_HOME/sbin/ $SPARROW_SBIN
+
+RUN cd /sparrow/sparrow-master \
+        && mvn compile \
         && mvn package -Dmaven.test.skip=true
+
+ENV SPARROW_JAR=/sparrow/sparrow-master/target/sparrow-1.0-SNAPSHOT.jar
