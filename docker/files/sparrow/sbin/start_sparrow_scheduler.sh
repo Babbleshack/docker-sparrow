@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/bin/bash
 
 SPARROW_JAR=/sparrow/sparrow-master/target/sparrow-1.0-SNAPSHOT.jar
 
