@@ -22,15 +22,57 @@ spec:
     spec:
       hostname: sparrow-master-0
       nodeSelector:
-        sparrow: master
+        scheduler: master
       containers:
         - name: sparrow-master
           image: babbleshack/sparrow:base
           imagePullPolicy: Always
           command: [ "/bin/bash" ]
-          args: [ "/opt/init_container.d/start_sparrow_backend.sh" ]
-
+          args: [ "/opt/init_container.d/start_sparrow_frontend.sh" ]
           ports:
+            - name: sprw-app
+              containerPort: 20101
+            - name: sprw-nm
+              containerPort: 20501
+            - name: sprw-int
+              containerPort: 20502
+            - name: sprw-sched
+              containerPort: 20503
+            - name: sprw-tasks-s
+              containerPort: 20507
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sparrow-scheduler
+  namespace: sparrow
+  labels:
+    app: sparrow
+    sparrow: worker
+spec:
+  serviceName: sparrow-service
+  replicas: 1 
+  selector:
+    matchLabels:
+      sparrow: worker
+  template: #pod template .spec.template
+    metadata:
+      namespace: sparrow
+      labels:
+        app: sparrow
+        sparrow: worker
+    spec:
+      nodeSelector:
+        scheduler: worker
+      containers:
+        - name: sparrow-worker
+          image: babbleshack/sparrow:base
+          imagePullPolicy: Always
+          command: [ "/bin/bash" ]
+          args: [ "/opt/init_container.d/start_sparrow_frontend.sh" ]
+          ports:
+            - name: sprw-app
+              containerPort: 20101
             - name: sprw-nm
               containerPort: 20501
             - name: sprw-int

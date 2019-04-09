@@ -1,0 +1,57 @@
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: sparrow-service
+  namespace: sparrow
+  labels:
+    app: sparrow
+    sparrow: master
+spec:
+  selector:
+    app: sparrow
+  ports: #Hadoop port http://fibrevillage.com/storage/637-hadoop-default-ports-reference
+    - name: sprw-app
+      protocol: TCP
+      port: 20101
+    - name: sprw-nm
+      protocol: TCP
+      port: 20501
+    - name: sprw-int
+      protocol: TCP
+      port: 20502
+    - name: sprw-sched
+      protocol: TCP
+      port: 20503
+    - name: sprw-tasks-s
+      protocol: TCP
+      port: 20507
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: sparrow-master-service
+  namespace: sparrow
+  labels:
+    app: sparrow
+    sparrow: master
+spec:
+  selector:
+    sparrow: master
+  ports: #Hadoop port http://fibrevillage.com/storage/637-hadoop-default-ports-reference
+    - name: sprw-app
+      protocol: TCP
+      port: 20101
+    - name: sprw-nm
+      protocol: TCP
+      port: 20501
+    - name: sprw-int
+      protocol: TCP
+      port: 20502
+    - name: sprw-sched
+      protocol: TCP
+      port: 20503
+    - name: sprw-tasks-s
+      protocol: TCP
+      port: 20507
