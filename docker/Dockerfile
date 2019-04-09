@@ -29,8 +29,6 @@ COPY ./files/ssh/ssh_config /etc/ssh/
 # Add init scripts
 COPY ./files/sparrow/sbin/* $SPARROW_SBIN/
 
-RUN ln -s $SPARROW_HOME/sbin/ $SPARROW_SBIN
-
 RUN cd /sparrow/sparrow-master \
         && mvn compile \
         && mvn package -Dmaven.test.skip=true
