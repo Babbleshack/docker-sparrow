@@ -12,6 +12,10 @@ ENV SPARROW_HOME=/sparrow/sparrow-master
 ENV SPARK_HOME=/sparrow/spark-sparrow
 
 ENV JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
+ENV SCALA_HOME=/usr/bin
+
+#Set hadoop version for spark
+ENV SPARK_HADOOP_VERSION=2.9.2
 
 WORKDIR /sparrow
 
